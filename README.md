@@ -1,3 +1,3 @@
-# deep-disadvantage-map
+# bbmap
 
-Interactive map of deep disadvantage for Rural Aperture Project story 4. Built using `react-map-gl`.
+Broadband mapping playground
