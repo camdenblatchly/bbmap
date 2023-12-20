@@ -3,9 +3,17 @@ import Map, {Source, Layer} from 'react-map-gl';
 import type {FillLayer} from 'react-map-gl';
 import { fitBounds } from 'viewport-mercator-project';
 
-const CountyChoropleth = ({ mapboxToken, geojsonData }) => {
+import {
+    mapboxStyle,
+    bb_tr_100_20,
+    contourStyle
+} from '../styles';
+
+const CountyChoropleth = ({ mapboxToken, filter }) => {
 
   const mapRef = useRef();
+
+  const layerFilter = ['==', ['get', 'category'], "Served"];
 
   const USA_BOUNDS = [
       [-125, 24], // Southwest coordinates: [Longitude, Latitude]
@@ -19,38 +27,29 @@ const CountyChoropleth = ({ mapboxToken, geojsonData }) => {
     padding: 20 // Optional padding around the bounds
   });
 
-  const dataLayer: FillLayer = {
-    id: 'data',
-    type: 'fill',
-    paint: {
-      'fill-color': {
-        property: 'index',
-        stops: [
-          [-10, 'red'],
-          [0, '#FFFDD0'],
-          [10, 'blue']
-        ]
-      },
-      'fill-opacity': 0.8
-    }
-  };
-
-
   const [hoverInfo, setHoverInfo] = useState(null);
-  const selectedCounty = (hoverInfo && hoverInfo.feature.properties.fips) || '';
-  const filter = useMemo(() => ['in', 'fips', selectedCounty], [selectedCounty]);
 
   const onHover = useCallback(event => {
-    const {
-      features,
-      point: {x, y}
-    } = event;
-    const hoveredFeature = features && features[0];
+  {
 
-    // prettier-ignore
-    setHoverInfo(hoveredFeature && {feature: hoveredFeature, x, y});
+    if (mapRef !== null && mapRef.current !== null) {
 
-  }, []);
+        const map = mapRef.current.getMap();
+
+        let featureId = null;
+
+        const {
+          features,
+          point: {x, y}
+        } = event;
+        const hoveredFeature = features && features[0];
+
+        setHoverInfo(hoveredFeature && {feature: hoveredFeature, x, y});
+
+    }
+  }
+}, []);
+
 
   useEffect(() => {
 
@@ -79,20 +78,29 @@ const CountyChoropleth = ({ mapboxToken, geojsonData }) => {
       }}
       mapStyle="mapbox://styles/mapbox/light-v9"
       mapboxAccessToken={mapboxToken}
-      interactiveLayerIds={['data']}
+      interactiveLayerIds={[bb_tr_100_20.layers[0]['id']]}
       onMouseMove={onHover}
     >
-      <Source type="geojson" data={geojsonData}>
-        <Layer {...dataLayer} />
-      {hoverInfo && (
-        <div className="tooltip" style={{left: hoverInfo.x, top: hoverInfo.y}}>
-          <div>
-            <b>{hoverInfo.feature.properties.countyname}</b>
-            <br />
-            {hoverInfo.feature.properties.legend_category}
-          </div>
-        </div>
-      )}
+      <Source id={"mapbox-terrain"} type={"vector"} url={"mapbox://mapbox.mapbox-terrain-v2"} >
+          <Layer {...contourStyle} >
+          </Layer>
+      </Source>
+      <Source {...bb_tr_100_20.sources[0]} >
+          <Layer 
+            { ...bb_tr_100_20.layers[0]} 
+            filter={layerFilter}
+          />
+          {hoverInfo && (
+            <div className="tooltip" style={{left: hoverInfo.x, top: hoverInfo.y}}>
+              <div>
+                <b>{hoverInfo.feature.properties.geoid_tr}</b>
+                <br />
+                {hoverInfo.feature.properties.state_abbr}
+                <br />
+                {hoverInfo.feature.properties.category}
+              </div>
+            </div>
+          )}
       </Source>
     </Map>
   );
