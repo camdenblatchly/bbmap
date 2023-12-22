@@ -1,7 +1,7 @@
 {
   "name": "rwjf4-viz",
   "version": "0.1.0",
-  "homepage": "https://ruralinnovation.github.io/deep-disadvantage-map/",
+  "homepage": "",
   "private": true,
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",

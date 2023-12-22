@@ -1,7 +1,9 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import Map, {Source, Layer} from 'react-map-gl';
+import Map, {Source, Layer, NavigationControl } from 'react-map-gl';
 import type {FillLayer} from 'react-map-gl';
 import { fitBounds } from 'viewport-mercator-project';
+
+import style from "./styles/GlMap.module.css";
 
 import {
     mapboxStyle,
@@ -25,9 +27,16 @@ const GlMap = ({ mapboxToken, filter }) => {
     padding: 20 // Optional padding around the bounds
   });
 
+  const MIN_ZOOM_LEVEL = 10;
+
   const [hoverInfo, setHoverInfo] = useState(null);
   const [layerFilter, setLayerFilter] = useState(['all']);
-  // ['==', ['get', 'category'], "Served"]
+  const [map_zoom, setMapZoom] = useState(zoom); 
+
+  const onMove = (event) => {
+    console.log("Zoom is ", event.viewState.zoom);
+    setMapZoom(event.viewState.zoom);
+  };
 
   const onHover = useCallback(event => {
   {
@@ -100,6 +109,7 @@ const GlMap = ({ mapboxToken, filter }) => {
       mapboxAccessToken={mapboxToken}
       interactiveLayerIds={[bb_tr_100_20.layers[0]['id']]}
       onMouseMove={onHover}
+      onMove={onMove}
     >
       <Source id={"mapbox-terrain"} type={"vector"} url={"mapbox://mapbox.mapbox-terrain-v2"} >
           <Layer {...contourStyle} >
@@ -122,6 +132,9 @@ const GlMap = ({ mapboxToken, filter }) => {
             </div>
           )}
       </Source>
+      {map_zoom < MIN_ZOOM_LEVEL && (
+        <div className={style["zoom-message"]}>Zoom closer to view data</div>
+      )}
     </Map>
   );
 };
