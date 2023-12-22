@@ -9,11 +9,9 @@ import {
     contourStyle
 } from '../styles';
 
-const CountyChoropleth = ({ mapboxToken, filter }) => {
+const GlMap = ({ mapboxToken, filter }) => {
 
   const mapRef = useRef();
-
-  const layerFilter = ['==', ['get', 'category'], "Served"];
 
   const USA_BOUNDS = [
       [-125, 24], // Southwest coordinates: [Longitude, Latitude]
@@ -28,6 +26,8 @@ const CountyChoropleth = ({ mapboxToken, filter }) => {
   });
 
   const [hoverInfo, setHoverInfo] = useState(null);
+  const [layerFilter, setLayerFilter] = useState(['all']);
+  // ['==', ['get', 'category'], "Served"]
 
   const onHover = useCallback(event => {
   {
@@ -46,9 +46,9 @@ const CountyChoropleth = ({ mapboxToken, filter }) => {
 
         setHoverInfo(hoveredFeature && {feature: hoveredFeature, x, y});
 
+      }
     }
-  }
-}, []);
+  }, []);
 
 
   useEffect(() => {
@@ -67,6 +67,26 @@ const CountyChoropleth = ({ mapboxToken, filter }) => {
       window.removeEventListener('resize', resizeMap);
     };
   }, []);
+
+  useEffect(() => {
+
+    if (filter === "all") {
+      setLayerFilter(['all']);
+    }
+
+    if (filter === "served") {
+      setLayerFilter(['==', ['get', 'category'], "Served"]);
+    }
+
+    if (filter === "underserved") {
+      setLayerFilter(['==', ['get', 'category'], "Underserved"]);
+    }
+
+    if (filter === "unserved") {
+      setLayerFilter(['==', ['get', 'category'], "Unserved"]);
+    }
+
+  }, [filter]);
 
   return (
     <Map
@@ -106,4 +126,4 @@ const CountyChoropleth = ({ mapboxToken, filter }) => {
   );
 };
 
-export default CountyChoropleth;
+export default GlMap;

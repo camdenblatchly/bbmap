@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useState } from 'react';
 
-import CountyChoropleth from './components/CountyChoropleth';
+import GlMap from './components/GlMap';
 
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -59,7 +59,7 @@ const App = () => {
             </FormControl>            
           </div>
           <div className="map-container">
-            <CountyChoropleth mapboxToken={MAPBOX_TOKEN} filter={filter} />
+            <GlMap mapboxToken={MAPBOX_TOKEN} filter={filter} />
           </div>
         </div>
       </ThemeProvider>
