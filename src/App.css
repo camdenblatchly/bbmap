@@ -13,7 +13,8 @@
 .controls {
 	width: 100%;
 	max-width: 1000px;
-	margin: 0 auto;
+	margin: 0px auto 20px auto;
+	display: block;
 }
 
 .map-container {

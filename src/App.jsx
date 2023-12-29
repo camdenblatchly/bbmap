@@ -8,6 +8,9 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -28,10 +31,19 @@ const MAPBOX_TOKEN = 'pk.eyJ1IjoicnVyYWxpbm5vIiwiYSI6ImNqeHl0cW0xODBlMm0zY2x0dXl
 
 const App = () => {
 
-  const [filter, setFilter] = useState("all");
+  // const [filter, setFilter] = useState("all");
+
+  const [filter, setFilter] = useState({
+    bb_service: "all",
+    state: "all",
+  });
 
   function handleChange(event) {
-    setFilter(event.target.value);
+
+    if (event.target.name === "bb-radio") {
+      setFilter({...filter, bb_service: event.target.value});
+    }
+
   }
 
   return (
@@ -40,13 +52,14 @@ const App = () => {
         <div className="App">
           <div className="controls">
             <h1>Broadband access</h1>
+
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label">Broadband service level</FormLabel>
+              <FormLabel id="bb-service-radio">Broadband service level</FormLabel>
               <RadioGroup
                 row
-                aria-labelledby="demo-row-radio-buttons-group-label"
+                aria-labelledby="bb-service-radio"
                 defaultValue="all"
-                name="row-radio-buttons-group"
+                name="bb-radio"
                 onChange={handleChange}
               >
                 <FormControlLabel value="all" control={<Radio />} label="All" />
@@ -54,7 +67,19 @@ const App = () => {
                 <FormControlLabel value="underserved" control={<Radio />} label="Underserved" />
                 <FormControlLabel value="unserved" control={<Radio />} label="Unserved" />
               </RadioGroup>
-            </FormControl>            
+            </FormControl>   
+
+            <Autocomplete
+              disablePortal
+              id="state-select"
+              options={["NH", "MA", "VT", "ME"]}
+              sx={{ width: 300 }}
+              renderInput={(params) => <TextField {...params} label="State Abbr" />}
+              onChange={(event, newValue) => {
+                setFilter({...filter, state: newValue});
+              }}
+            />
+
           </div>
           <div className="map-container">
             <GlMap mapboxToken={MAPBOX_TOKEN} filter={filter} />

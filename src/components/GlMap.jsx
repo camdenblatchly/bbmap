@@ -73,21 +73,34 @@ const GlMap = ({ mapboxToken, filter }) => {
 
   useEffect(() => {
 
-    if (filter === "all") {
-      setLayerFilter(['all']);
+    console.log("Are we in here?", filter);
+
+    let bb_filter = ["all"];
+    let st_filter = ["all"];
+
+    // if (filter.bb_service === "all") {
+    //   setLayerFilter(['all']);
+    // }
+
+    if (filter.state) {
+      st_filter = ['==', ['get', 'state_abbr'], filter.state];
     }
 
-    if (filter === "served") {
-      setLayerFilter(['==', ['get', 'category'], "Served"]);
+    if (filter.bb_service === "served") {
+      bb_filter = ['==', ['get', 'category'], "Served"];
     }
 
-    if (filter === "underserved") {
-      setLayerFilter(['==', ['get', 'category'], "Underserved"]);
+    if (filter.bb_service === "underserved") {
+      bb_filter = ['==', ['get', 'category'], "Underserved"];
     }
 
-    if (filter === "unserved") {
-      setLayerFilter(['==', ['get', 'category'], "Unserved"]);
+    if (filter.bb_service === "unserved") {
+      bb_filter = ['==', ['get', 'category'], "Unserved"];
     }
+
+    let new_filter = ["all", bb_filter, st_filter];
+
+    setLayerFilter(new_filter);
 
   }, [filter]);
 
