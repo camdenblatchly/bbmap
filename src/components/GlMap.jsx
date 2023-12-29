@@ -1,24 +1,22 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import Map, {Source, Layer, NavigationControl } from 'react-map-gl';
-import type {FillLayer} from 'react-map-gl';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import Map, {Source, Layer } from 'react-map-gl';
 import { fitBounds } from 'viewport-mercator-project';
 
 import style from "./styles/GlMap.module.css";
 
 import {
-    mapboxStyle,
     bb_tr_100_20,
     contourStyle
 } from '../styles';
 
+const USA_BOUNDS = [
+    [-125, 24], // Southwest coordinates: [Longitude, Latitude]
+    [-66, 49]   // Northeast coordinates: [Longitude, Latitude]
+];
+
 const GlMap = ({ mapboxToken, filter }) => {
 
   const mapRef = useRef();
-
-  const USA_BOUNDS = [
-      [-125, 24], // Southwest coordinates: [Longitude, Latitude]
-      [-66, 49]   // Northeast coordinates: [Longitude, Latitude]
-  ];
 
  const { longitude, latitude, zoom } = fitBounds({
     width: window.innerWidth > 1000? 1000: window.innerWidth,
@@ -34,18 +32,12 @@ const GlMap = ({ mapboxToken, filter }) => {
   const [map_zoom, setMapZoom] = useState(zoom); 
 
   const onMove = (event) => {
-    console.log("Zoom is ", event.viewState.zoom);
     setMapZoom(event.viewState.zoom);
   };
 
   const onHover = useCallback(event => {
-  {
 
     if (mapRef !== null && mapRef.current !== null) {
-
-        const map = mapRef.current.getMap();
-
-        let featureId = null;
 
         const {
           features,
@@ -53,10 +45,12 @@ const GlMap = ({ mapboxToken, filter }) => {
         } = event;
         const hoveredFeature = features && features[0];
 
+        console.log(hoveredFeature);
+
         setHoverInfo(hoveredFeature && {feature: hoveredFeature, x, y});
 
       }
-    }
+
   }, []);
 
 

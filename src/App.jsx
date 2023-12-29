@@ -10,8 +10,6 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import { filter } from 'd3';
-
 const theme = createTheme({
     typography: {
         fontFamily: 'Bitter, TT Hoves, Helvetica, Arial',
@@ -43,7 +41,7 @@ const App = () => {
           <div className="controls">
             <h1>Broadband access</h1>
             <FormControl>
-              <FormLabel id="demo-row-radio-buttons-group-label"></FormLabel>
+              <FormLabel id="demo-row-radio-buttons-group-label">Broadband service level</FormLabel>
               <RadioGroup
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
